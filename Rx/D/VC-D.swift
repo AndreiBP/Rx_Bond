@@ -20,7 +20,7 @@ class VC_D: UIViewController {
         super.viewDidLoad()
         
         buttonOutlet.reactive.tap.map{_ in "кнопка нажата: \(self.counter) раз(a)"}.bind(to: label)
-        buttonOutlet.reactive.tap.observeNext { _ in
+        _ = buttonOutlet.reactive.tap.observeNext { _ in
             self.counter += 1
         }
     }
