@@ -19,51 +19,33 @@ class VC_C: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var searchTextField: UITextField!
     
-    var arrayName = MutableObservableArray(["A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9", "A10", "A11", "A12", "A13", "A14", "A15", "A16", "A17", "A18", "A19", "A20"])
+    var arrayName = MutableObservableArray(["A1", "A2", "A3", "A4", "B5", "B6", "B7", "B8", "B9", "C10", "C11", "C12", "C13", "Q14", "Q15", "Q16", "Q17", "Q18", "W19", "W20"])
     var arrayName2 = ["Andrei", "Maks", "Alex", "Bred", "Jon"]
-    var nowArrayName = MutableObservableArray([""])
     var rootArray = MutableObservableArray([""])
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        let searchString = searchTextField.reactive.text.throttle(for: 0).filter{ [self] text in arrayName.collection.contains(text!) }
-//
-//        _ = searchString.observeNext { [self] text in
-//           // nowArrayName.append(text!)
-//           print(text)
-//            nowArrayName.bind(to: arrayName)
-//        }
-        
-       _ = searchTextField.reactive.text.throttle(for: 0).filter{ [self] text in arrayName.collection.contains(text!) }.observeNext{ [self] text in nowArrayName.append(text!)
-            nowArrayName.bind(to: arrayName)
-           //tableView.reloadData()
-        }
-        
-        arrayName.bind(to: tableView) { (dataSourse, indexPath, tableView) -> UITableViewCell in
-            let cell = tableView.dequeueReusableCell(withIdentifier: "TV_CCell") as! TV_CCell
-            
-//            let cell = tableView.dequeueReusableCell(withIdentifier: "TV_CCell", for: indexPath)
-//            if cell.editingStyle == .delete {
-//                    print("Deleted")
-//                self.arrayName.remove(at: indexPath.row) //Remove element from your array
-//                    self.tableView.deleteRows(at: [indexPath], with: .automatic)
-//                tableView.reloadData()
-//            }
-            
-                cell.labelCell.text? = dataSourse[indexPath.row]
+        rootArray.bind(to: tableView) { (dataSourse, indexPath, tableView) -> UITableViewCell in
+                let cell = tableView.dequeueReusableCell(withIdentifier: "TV_CCell") as! TV_CCell
+                    cell.labelCell.text? = dataSourse[indexPath.row]
                 return cell }
+        _ = searchTextField.reactive.text.throttle(for: 0).observeNext{ [self] text in
+                    if searchTextField.hasText == true {
+                        _ = arrayName.filterCollection{ $0.contains(text!)}.bind(to: rootArray)
+                    } else { arrayName.bind(to: rootArray)}
+            }
+        
     }
-    
    
     @IBAction func addButton(_ sender: Any) {
         if let randomElement = arrayName2.randomElement() {
-            arrayName.insert(randomElement, at: 0)
+            rootArray.insert(randomElement, at: 0)
         }
     }
     
     @IBAction func deleteButton(_ sender: Any) {
-        arrayName.removeLast()
+        rootArray.removeLast()
     }
 }
 
